@@ -7,7 +7,7 @@ class RegisterationPoint(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'password', 'cv',)
+        fields = ('email', 'password', 'username', 'cv',)
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -17,5 +17,5 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model =User
-        fields = ('email', 'password', 'token')
+        fields = ('email', 'password', 'username', 'token')
         read_only_fields = ['token']

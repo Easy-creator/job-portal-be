@@ -27,7 +27,11 @@ class RegisterApiView(GenericAPIView):
             serializers.save()
             return response.Response(serializers.data, status = status.HTTP_201_CREATED )
         
+ 
         return response.Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST )
+    
+    def get_serializer_class(self):
+        return RegisterationPoint
 
 class LoginApiView(GenericAPIView):
     authentication_classes = []
