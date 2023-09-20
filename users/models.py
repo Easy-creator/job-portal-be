@@ -13,12 +13,12 @@ from datetime import datetime, timedelta
 
 class MyUserManager(UserManager):
 
-    def _create_user(self, username, email, password, **extra_fields):
+    def _create_user(self, email, password, **extra_fields):
         """
         Create and save a user with the given username, email, and password.
         """
-        if not username:
-            raise ValueError("The given username must be set")
+        # if not username:
+        #     raise ValueError("The given username must be set")
         
         if not email:
             raise ValueError("The given email must be set")
@@ -27,18 +27,19 @@ class MyUserManager(UserManager):
         GlobalUserModel = apps.get_model(
             self.model._meta.app_label, self.model._meta.object_name
         )
-        username = GlobalUserModel.normalize_username(username)
-        user = self.model(username=username, email=email, **extra_fields)
+        # username = GlobalUserModel.normalize_username(username)
+        # username = username,
+        user = self.model(email=email, **extra_fields)
         user.password = make_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, username, email, password=None, **extra_fields):
+    def create_user(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
-        return self._create_user(username, email, password, **extra_fields)
+        return self._create_user(email, password, **extra_fields)
 
-    def create_superuser(self, username, email, password=None, **extra_fields):
+    def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -47,25 +48,27 @@ class MyUserManager(UserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self._create_user(username, email, password, **extra_fields)
+        # username
+        return self._create_user(email, password, **extra_fields)
 
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
 
-    username = models.CharField(
-        _("username"),
-        max_length=150,
-        unique=True,
-        help_text=_(
-            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
-        ),
-        validators=[username_validator],
-        error_messages={
-            "unique": _("A user with that username already exists."),
-        },
-    )
+    # username = models.CharField(
+    #     _("username"),
+    #     max_length=150,
+    #     unique=True,
+    #     blank=True,
+    #     help_text=_(
+    #         "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+    #     ),
+    #     validators=[username_validator],
+    #     error_messages={
+    #         "unique": _("A user with that username already exists."),
+    #     },
+    # )
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), blank=False, unique=True)
@@ -102,7 +105,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    # REQUIRED_FIELDS = ["username"]
 
     class Meta:
         verbose_name = _("user")
@@ -111,7 +114,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def token(self):
-        token = jwt.encode({'username': self.username, 'email': self.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, settings.SECRET_KEY, algorithm="HS256")
+        token = jwt.encode({'email': self.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, settings.SECRET_KEY, algorithm="HS256")
 
         return token
 
