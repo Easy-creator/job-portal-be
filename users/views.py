@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
 from rest_framework import response, status
-from users.serializers import RegisterationPoint, LoginSerializer
+from users.serializers import RegisterationPoint, LoginSerializer, EmployerPoint
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 
@@ -32,6 +32,26 @@ class RegisterApiView(GenericAPIView):
     
     def get_serializer_class(self):
         return RegisterationPoint
+
+class EmployerRegisterApiView(GenericAPIView):
+    authentication_classes = []
+    serializers_class = EmployerPoint
+
+    def post(self, request):
+        name = request.data.get('company_name', None)
+        
+
+        serializers = self.serializers_class(data=request.data)
+
+        if serializers.is_valid():
+            serializers.save()
+            return response.Response(serializers.data, status = status.HTTP_201_CREATED )
+        
+
+        return response.Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST )
+    
+    def get_serializer_class(self):
+        return EmployerPoint
 
 class LoginApiView(GenericAPIView):
     authentication_classes = []

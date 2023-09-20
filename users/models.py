@@ -100,7 +100,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     cv = models.FileField(upload_to="cv/", blank=True)
 
     #for the employers
-    company_email = models.CharField(max_length=100, blank=True)
     company_name = models.CharField(max_length=100, blank=True)
     
     EMAIL_FIELD = "email"

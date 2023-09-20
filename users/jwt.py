@@ -18,8 +18,8 @@ class JWTAuthetication(BaseAuthentication):
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
 
-            username = payload['email']
-            user = User.objects.get(email=username)
+            email = payload['email']
+            user = User.objects.get(email=email)
 
             return (user, token)
 
@@ -33,3 +33,4 @@ class JWTAuthetication(BaseAuthentication):
             raise exceptions.AuthenticationFailed('User Does not exist')
 
         return super().authenticate(request)
+    
