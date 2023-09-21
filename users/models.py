@@ -116,4 +116,25 @@ class User(AbstractBaseUser, PermissionsMixin):
         token = jwt.encode({'email': self.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, settings.SECRET_KEY, algorithm="HS256")
 
         return token
+    
+class JobPost(models.Model):
+    employetype= (
+        ('Part Time', 'Part Time'),
+        ('Full Time', 'Full Time')
+    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    jobtitle=models.CharField(max_length=100, null=True, blank=True)
+    descriptions= models.CharField(max_length=250, null=True, blank=True)
+    emptype= models.CharField(choices=employetype, max_length=100, null=True, blank=True)
+    location=models.CharField(max_length=100, null=True, blank=True)
+    worktype=models.CharField(max_length=20,choices=(('Onsite', 'Onsite'), ('Remote', 'Remote')), null=True, blank=True)
+    responsibilities= models.CharField(max_length=500, null=True, blank=True)
+    benifits=models.CharField(max_length=200, null=True, blank=True)
+    minsalary= models.FloatField()
+    maxsalary= models.FloatField()
+    salarytype=models.CharField(max_length=20,choices=(('Monthly', 'Monthly'), ('Yearly', 'Yearly')), null=True, blank=True)
+    postdate=models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.user.username)
 
