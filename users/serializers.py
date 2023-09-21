@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User
+from users.models import User, JobPost
 from rest_framework.exceptions import ValidationError
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -71,3 +71,10 @@ class LoginSerializer(serializers.ModelSerializer):
         model =User
         fields = ('email', 'password', 'token')
         read_only_fields = ['token']
+
+
+class JobPostSerializer(serializers.ModelSerializer): # Job Post Serializer
+    class Meta:
+        model= JobPost
+        fields="__all__"
+

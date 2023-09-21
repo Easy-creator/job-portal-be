@@ -12,7 +12,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 
-from users.models import User
+from users.models import User, JobPost
 from users.utils import Util
 # Create your views here.
 
