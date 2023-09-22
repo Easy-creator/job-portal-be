@@ -1,4 +1,4 @@
-from .views import RegisterApiView, LoginApiView, AuthUserApiView, EmployerRegisterApiView, PasswordResetLink, PasswordTokenCheck
+from .views import RegisterApiView, LoginApiView, AuthUserApiView, EmployerRegisterApiView, PasswordResetLink, PasswordTokenCheck, SetNewPassword
 from django.urls import path
 
 app_name = 'users'
@@ -11,5 +11,7 @@ urlpatterns = [
 
     path('password/check_point/<token>/<encode>/', PasswordTokenCheck.as_view(), name="pwd_reset_check"),
     path('password/reset/', PasswordResetLink.as_view(), name="pwd_reset"),
+
+    path('password/reset/set/', SetNewPassword.as_view(), name="pwd_reset_new"),
 
 ]
