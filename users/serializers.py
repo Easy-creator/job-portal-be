@@ -8,6 +8,38 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from users.utils import Util
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed
+
+
+class NewPassword(serializers.Serializer):
+    password = serializers.CharField(max_length=16, min_length=6, write_only=True)
+    token = serializers.CharField(write_only=True)
+    encode = serializers.CharField(write_only=True)
+
+    class Meta:
+        fields = ['password', 'token', 'encode']
+
+    def validate(self, attrs):
+        try:
+            password = attrs.get('password')
+            token = attrs.get('token')
+            encode = attrs.get('encode')
+
+            id = force_str(urlsafe_base64_decode(encode))
+            user = User.objects.get(id = id)
+
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                raise AuthenticationFailed('The reset link is invalid', 401)
+            
+            user.set_password(password)
+            user.save()
+            return user
+        # except DjangoUnicodeDecodeError:
+        except Exception as e:
+            return AuthenticationFailed('This link is invalid', 401)
+        return super().validate(attrs)
 
 class ResetPWD(serializers.Serializer):
     email = serializers.EmailField()
@@ -15,28 +47,6 @@ class ResetPWD(serializers.Serializer):
     class Meta:
         fields = ['email']
 
-    # def validate(self, attrs):
-    #     try:
-    #         email = attrs['data'].get('email', '')
-    #         if User.objects.filter(email=email).exists():
-    #             user = User.objects.get(email=email)
-    #             encode = urlsafe_base64_encode(user.id)
-    #             token = PasswordResetTokenGenerator().make_token(user)
-    #             current_site = get_current_site(attrs['request']).domain
-    #             relative_link = reverse('pwd_reset_check', kwargs={'encode': encode, 'token': token})
-    #             absurl = 'http://' + current_site + '/' + relative_link
-    #             email_body = "Hi " + user.first_name + "Use the link below to verify your email \n" + absurl
-    #             data = {'email_body': email_body, 'to_mail': user.email, 'email_subject': 'Verify your email'}
-
-    #             Util.send_mail(data)
-
-            
-    #         return attrs
-        
-    #     except:
-    #         pass
-
-    #     return super().validate(attrs)
 
 class RegisterationPoint(serializers.ModelSerializer):
     password = serializers.CharField(max_length=120, min_length=6, write_only=True)

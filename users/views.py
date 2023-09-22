@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
 from rest_framework import response, status
-from users.serializers import RegisterationPoint, LoginSerializer, EmployerPoint, ResetPWD
+from users.serializers import RegisterationPoint, LoginSerializer, EmployerPoint, ResetPWD, NewPassword
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_str, force_str, DjangoUnicodeDecodeError, smart_bytes
+from django.utils.encoding import smart_str, DjangoUnicodeDecodeError, smart_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
@@ -17,10 +17,9 @@ from users.utils import Util
 # Create your views here.
 
 class PasswordResetLink(GenericAPIView):
-    serializer_class = ResetPWD
-    
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    authentication_classes = []
 
+    serializer_class = ResetPWD
     def post(self, request):
         data = {'request': request, 'data': request.data }
         serializer = self.serializer_class(data = data)
@@ -43,8 +42,33 @@ class PasswordResetLink(GenericAPIView):
             return Response({'error': 'the email did not match any account'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 class PasswordTokenCheck(GenericAPIView):
+    authentication_classes = []
+
     def get(self, request, token, encode):
-        pass
+        try:
+            id = smart_str(urlsafe_base64_decode(encode))
+            user = User.objects.get(id = id)
+
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                return Response({'error': 'Token is not valid'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            return Response({'sucess': True, 'message': 'Valid link', 'token': token, 'encode': encode}, status=status.HTTP_200_OK)
+            
+
+        except DjangoUnicodeDecodeError:
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                return Response({'error': 'Token is not valid'}, status=status.HTTP_400_BAD_REQUEST)
+            
+class SetNewPassword(GenericAPIView):
+    authentication_classes = []
+
+    serializer_class = NewPassword
+    
+    def patch(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response({'success': True, 'message': 'Password Sucessfully Changed'}, status=status.HTTP_202_ACCEPTED)
 
 
 class AuthUserApiView(GenericAPIView):

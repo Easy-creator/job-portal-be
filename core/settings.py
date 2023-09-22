@@ -140,11 +140,13 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = "users.User"
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 
-# CORS_ORIGIN_WHITELIST = (
-#   '',
-# )
+CORS_ORIGIN_WHITELIST = (
+  'http://ec2-3-108-74-96.ap-south-1.compute.amazonaws.com',
+  'http://127.0.0.1:3000',
+  'http://localhost:3000',
+)
 
 
 # Email configuration
