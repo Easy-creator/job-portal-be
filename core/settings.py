@@ -140,7 +140,9 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = "users.User"
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 # CORS_ORIGIN_WHITELIST = (
 #   'http://ec2-3-108-74-96.ap-south-1.compute.amazonaws.com',
