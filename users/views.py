@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 from rest_framework import response, status
 from users.serializers import RegisterationPoint, LoginSerializer, EmployerPoint, ResetPWD, NewPassword, JobPostSerializer
 from django.contrib.auth import authenticate
@@ -133,8 +134,9 @@ class LoginApiView(GenericAPIView):
         
         return response.Response({"message": "Invalid Username or Password Please try again"}, status = status.HTTP_401_UNAUTHORIZED)
 
-
-class JobpostAPiview(GenericAPIView):
+#Job post View
+class JobpostAPiview(APIView): 
+    authentication_classes = []
     serializer_class = JobPostSerializer
 
     def post(self, request):
@@ -145,5 +147,21 @@ class JobpostAPiview(GenericAPIView):
             return Response({'msg':'Job post done', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'msg':'Unable to Job post', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+    def get(self, request):
+        location = request.query_params.get('location')  
+
+        if location:
+            jobpost_queryset = JobPost.objects.filter(location=location)
+            
+            if jobpost_queryset.exists():  # Check if any job posts match the location
+                serializer = JobPostSerializer(jobpost_queryset, many=True)
+                return Response({'msg': 'Location wise data', 'data': serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({'msg': 'No job post at this location'}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'msg': 'Location parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
+
         
     

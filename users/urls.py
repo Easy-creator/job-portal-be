@@ -14,6 +14,7 @@ urlpatterns = [
 
     path('password/reset/set/', SetNewPassword.as_view(), name="pwd_reset_new"),
 
-    path('jobpost/', JobpostAPiview.as_view(), name='job_post'), 
+    path('jobpost/', JobpostAPiview.as_view(), name='job_post'), #Job Post URL
+   
 
 ]
