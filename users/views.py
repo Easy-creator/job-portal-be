@@ -14,6 +14,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 
 from users.models import User, JobPost
+from .paginations import LargeResultsSetPagination
 from users.utils import Util
 # Create your views here.
 
@@ -149,30 +150,19 @@ class JobpostAPiview(APIView):
             return Response({'msg':'Unable to Job post', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 
-    # def get(self, request):
-    #     location = request.query_params.get('location')  
-
-    #     if location:
-    #         jobpost_queryset = JobPost.objects.filter(location=location)
-            
-    #         if jobpost_queryset.exists():  # Check if any job posts match the location
-    #             serializer = JobPostSerializer(jobpost_queryset, many=True)
-    #             return Response({'msg': 'Location wise data', 'data': serializer.data}, status=status.HTTP_200_OK)
-    #         else:
-    #             return Response({'msg': 'No job post at this location'}, status=status.HTTP_204_NO_CONTENT)
-    #     else:
-    #         return Response({'msg': 'Location parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class Jobpostfilter(APIView):
         def get(self, request):
             location = request.query_params.get('location')  
-
+            
             if location:
                 jobpost_queryset = JobPost.objects.filter(location=location)
                 
                 if jobpost_queryset.exists():  # Check if any job posts match the location
-                    serializer = JobPostSerializer(jobpost_queryset, many=True)
+                    paginator= LargeResultsSetPagination()
+                    page=paginator.paginate_queryset(jobpost_queryset, request)
+                    print('page pagination', page)
+                    serializer = JobPostSerializer(page, many=True)
                     return Response({'msg': 'Location wise data', 'data': serializer.data}, status=status.HTTP_200_OK)
                 else:
                     return Response({'msg': 'No job post at this location'}, status=status.HTTP_204_NO_CONTENT)

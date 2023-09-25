@@ -16,7 +16,7 @@ urlpatterns = [
     path('password/reset/set/', SetNewPassword.as_view(), name="pwd_reset_new"), # Set New Password
 
     path('jobpost/', JobpostAPiview.as_view(), name='job_post'), #Job Post URL
-    path('jobbylocation/', Jobpostfilter.as_view(), name='job_by_location'), # Location wise filter
+    path('jobsearchbylocation/', Jobpostfilter.as_view(), name='job_search_by_location'), # Location wise filter
    
 
 ]
