@@ -3,6 +3,7 @@ core/__pycache__/
 users/__pycache__/
 users/migrations/
 db.sqlite3
+db3.sqlite3
 migrations/
 __pycache__/
 

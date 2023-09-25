@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'scrape',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -163,5 +164,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 # EMAIL_HOST_PASSWORD = 'ojzjgggmtwgkheug'
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+LOGIN_URL = '/users/login/'
 
 # Job project: jtkt bwxt nonz psbw
