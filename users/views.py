@@ -148,6 +148,15 @@ class JobpostAPiview(APIView):
             return Response({'msg':'Job post done', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'msg':'Unable to Job post', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        try:
+            jobpost_data=JobPost.objects.all() # Get All jobs
+            job_serializer= JobPostSerializer(jobpost_data, many=True)
+            return Response({'msg':'All jobs list', 'data': job_serializer.data}, status=status.HTTP_200_OK)
+        
+        except JobPost.DoesNotExist:
+            return Response({'msg':'No Jobs found'}, status=status.HTTP_417_EXPECTATION_FAILED)
         
 
 
