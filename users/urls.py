@@ -1,4 +1,5 @@
-from .views import RegisterApiView, LoginApiView, AuthUserApiView, EmployerRegisterApiView, PasswordResetLink, PasswordTokenCheck, SetNewPassword, JobpostAPiview
+from .views import (RegisterApiView, LoginApiView, AuthUserApiView, EmployerRegisterApiView, PasswordResetLink, 
+                    PasswordTokenCheck, SetNewPassword, JobpostAPiview, Jobpostfilter)
 from django.urls import path
 
 app_name = 'users'
@@ -15,6 +16,7 @@ urlpatterns = [
     path('password/reset/set/', SetNewPassword.as_view(), name="pwd_reset_new"),
 
     path('jobpost/', JobpostAPiview.as_view(), name='job_post'), #Job Post URL
+    path('jobbylocation/', Jobpostfilter.as_view(), name='job_by_location'), # Location wise filter
    
 
 ]

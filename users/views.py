@@ -149,19 +149,34 @@ class JobpostAPiview(APIView):
             return Response({'msg':'Unable to Job post', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 
-    def get(self, request):
-        location = request.query_params.get('location')  
+    # def get(self, request):
+    #     location = request.query_params.get('location')  
 
-        if location:
-            jobpost_queryset = JobPost.objects.filter(location=location)
+    #     if location:
+    #         jobpost_queryset = JobPost.objects.filter(location=location)
             
-            if jobpost_queryset.exists():  # Check if any job posts match the location
-                serializer = JobPostSerializer(jobpost_queryset, many=True)
-                return Response({'msg': 'Location wise data', 'data': serializer.data}, status=status.HTTP_200_OK)
-            else:
-                return Response({'msg': 'No job post at this location'}, status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response({'msg': 'Location parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
+    #         if jobpost_queryset.exists():  # Check if any job posts match the location
+    #             serializer = JobPostSerializer(jobpost_queryset, many=True)
+    #             return Response({'msg': 'Location wise data', 'data': serializer.data}, status=status.HTTP_200_OK)
+    #         else:
+    #             return Response({'msg': 'No job post at this location'}, status=status.HTTP_204_NO_CONTENT)
+    #     else:
+    #         return Response({'msg': 'Location parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class Jobpostfilter(APIView):
+        def get(self, request):
+            location = request.query_params.get('location')  
+
+            if location:
+                jobpost_queryset = JobPost.objects.filter(location=location)
+                
+                if jobpost_queryset.exists():  # Check if any job posts match the location
+                    serializer = JobPostSerializer(jobpost_queryset, many=True)
+                    return Response({'msg': 'Location wise data', 'data': serializer.data}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'msg': 'No job post at this location'}, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'msg': 'Location parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
         
     
